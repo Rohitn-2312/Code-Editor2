@@ -24,6 +24,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [newFileName, setNewFileName] = useState<string>('');
   const [newFolderName, setNewFolderName] = useState<string>('');
+  const [activeFolder, setActiveFolder] = useState<string | null>(null);
 
   const toggleFolder = (folderId: string) => {
     setExpandedFolders(prev =>
@@ -35,8 +36,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const handleCreateFile = (folderId: string) => {
     if (newFileName.trim()) {
-      onCreateFile(folderId, newFileName.trim());
-      setNewFileName('');
+      const fileExtension = newFileName.split('.').pop()?.toLowerCase();
+      if (['js', 'ts', 'txt'].includes(fileExtension || '')) {
+        onCreateFile(folderId, newFileName.trim());
+        setNewFileName('');
+        setActiveFolder(null);
+      } else {
+        alert('Please choose a valid file extension (.js, .ts, or .txt)');
+      }
+    } else {
+      alert('Please enter a file name');
     }
   };
 
@@ -79,12 +88,20 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <FiFolder className="w-4 h-4 mr-1" />
                 <span className="text-sm">{folder.name}</span>
               </div>
-              <button
-                className="p-1 hover:bg-[#3c3c3c] rounded"
-                onClick={() => onDeleteFolder(folder.id)}
-              >
-                <FiTrash2 className="w-3 h-3" />
-              </button>
+              <div className="flex items-center">
+                <button
+                  className="p-1 hover:bg-[#3c3c3c] rounded mr-1"
+                  onClick={() => setActiveFolder(activeFolder === folder.id ? null : folder.id)}
+                >
+                  <FiFilePlus className="w-3 h-3" />
+                </button>
+                <button
+                  className="p-1 hover:bg-[#3c3c3c] rounded"
+                  onClick={() => onDeleteFolder(folder.id)}
+                >
+                  <FiTrash2 className="w-3 h-3" />
+                </button>
+              </div>
             </div>
             {expandedFolders.includes(folder.id) && (
               <ul className="ml-4 mt-1 space-y-1">
@@ -107,23 +124,25 @@ const Sidebar: React.FC<SidebarProps> = ({
                     </button>
                   </li>
                 ))}
-                <li>
-                  <div className="flex items-center mt-1">
-                    <input
-                      type="text"
-                      value={newFileName}
-                      onChange={(e) => setNewFileName(e.target.value)}
-                      placeholder="New file name"
-                      className="flex-grow bg-[#3c3c3c] text-white p-1 rounded-l text-sm"
-                    />
-                    <button
-                      className="bg-[#0e639c] hover:bg-[#1177bb] text-white p-1 rounded-r text-sm"
-                      onClick={() => handleCreateFile(folder.id)}
-                    >
-                      <FiFilePlus className="w-4 h-4" />
-                    </button>
-                  </div>
-                </li>
+                {activeFolder === folder.id && (
+                  <li>
+                    <div className="flex items-center mt-1">
+                      <input
+                        type="text"
+                        value={newFileName}
+                        onChange={(e) => setNewFileName(e.target.value)}
+                        placeholder="New file name"
+                        className="flex-grow bg-[#3c3c3c] text-white p-1 rounded-l text-sm"
+                      />
+                      <button
+                        className="bg-[#0e639c] hover:bg-[#1177bb] text-white p-1 rounded-r text-sm"
+                        onClick={() => handleCreateFile(folder.id)}
+                      >
+                        <FiFilePlus className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </li>
+                )}
               </ul>
             )}
           </li>

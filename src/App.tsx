@@ -35,11 +35,11 @@ const App: React.FC = () => {
       const updatedFolders = folders.map(folder => ({
         ...folder,
         files: folder.files.map(file => 
-          file.id === currentFile.id ? { ...file, content: currentFile.content } : file
+          file.id === currentFile.id ? { ...currentFile } : file
         )
       }));
       setFolders(updatedFolders);
-      localStorage.setItem(`file_${currentFile.id}`, currentFile.content);
+      localStorage.setItem(`file_${currentFile.id}`, JSON.stringify(currentFile));
       alert('File saved successfully!');
     }
   };
@@ -75,12 +75,14 @@ const App: React.FC = () => {
   };
 
   const updateFile = (updatedFile: File) => {
+    setCurrentFile(updatedFile);
     const updatedFolders = folders.map(folder => ({
       ...folder,
-      files: folder.files.map(file => file.id === updatedFile.id ? updatedFile : file)
+      files: folder.files.map(file => 
+        file.id === updatedFile.id ? updatedFile : file
+      )
     }));
     setFolders(updatedFolders);
-    setCurrentFile(updatedFile);
   };
 
   const createFolder = (name: string) => {
