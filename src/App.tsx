@@ -4,12 +4,15 @@ import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import { Language, File, Folder } from './types';
 import { useLocalStorage } from './hooks/useLocalStorage';
+import { useResizable } from './hooks/useResizable';
 
 const App: React.FC = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<Language>({ code: 'javascript', name: 'JavaScript' });
   const [folders, setFolders] = useLocalStorage<Folder[]>('folders', []);
   const [currentFile, setCurrentFile] = useState<File | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+
+  const { width: sidebarWidth, startResizing } = useResizable(250, 150, 400);
 
   useEffect(() => {
     if (folders.length === 0) {
@@ -102,6 +105,21 @@ const App: React.FC = () => {
     }
   };
 
+  const handleRun = () => {
+    if (currentFile) {
+      try {
+        const result = eval(currentFile.content);
+        console.log('Execution result:', result);
+        alert('Code executed. Check the console for output.');
+      } catch (error) {
+        console.error('Execution error:', error);
+        alert(`Error executing code: ${error}`);
+      }
+    } else {
+      alert('No file selected to run.');
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen bg-[#1e1e1e] text-white">
       <Header
@@ -113,25 +131,35 @@ const App: React.FC = () => {
         setTheme={setTheme}
       />
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar
-          folders={folders}
-          currentFile={currentFile}
-          onFileSelect={setCurrentFile}
-          onCreateFile={createFile}
-          onDeleteFile={deleteFile}
-          onCreateFolder={createFolder}
-          onDeleteFolder={deleteFolder}
+        <div style={{ width: sidebarWidth, flexShrink: 0 }} className="bg-[#1e1e1e]">
+          <Sidebar
+            folders={folders}
+            currentFile={currentFile}
+            onFileSelect={setCurrentFile}
+            onCreateFile={createFile}
+            onDeleteFile={deleteFile}
+            onCreateFolder={createFolder}
+            onDeleteFolder={deleteFolder}
+            width={sidebarWidth}
+          />
+        </div>
+        <div
+          className="resize-handle"
+          onMouseDown={startResizing}
         />
-        <Editor
-          file={currentFile}
-          onChange={(content) => {
-            if (currentFile) {
-              updateFile({ ...currentFile, content });
-            }
-          }}
-          theme={theme}
-          language={selectedLanguage.code}
-        />
+        <div className="flex-grow overflow-hidden bg-[#1e1e1e]">
+          <Editor
+            file={currentFile}
+            onChange={(content) => {
+              if (currentFile) {
+                updateFile({ ...currentFile, content });
+              }
+            }}
+            theme={theme}
+            language={selectedLanguage.code}
+            onRun={handleRun}
+          />
+        </div>
       </div>
     </div>
   );

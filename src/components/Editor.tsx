@@ -1,16 +1,17 @@
 import React from 'react';
 import MonacoEditor from '@monaco-editor/react';
 import { File } from '../types';
-import { FiCode } from 'react-icons/fi';
+import { FiCode, FiPlay } from 'react-icons/fi';
 
 interface EditorProps {
   file: File | null;
   onChange: (content: string) => void;
   theme: 'light' | 'dark';
   language: string;
+  onRun: () => void;
 }
 
-const Editor: React.FC<EditorProps> = ({ file, onChange, theme, language }) => {
+const Editor: React.FC<EditorProps> = ({ file, onChange, theme, language, onRun }) => {
   if (!file) return null;
 
   const handleEditorDidMount = (editor: any, monaco: any) => {
@@ -67,44 +68,52 @@ const Editor: React.FC<EditorProps> = ({ file, onChange, theme, language }) => {
   };
 
   return (
-    <div className="flex-1 overflow-hidden">
-      <div className="bg-[#252526] p-2 flex justify-end">
+    <div className="h-full flex flex-col">
+      <div className="bg-[#252526] p-2 flex justify-end space-x-2">
         <button
           onClick={() => handleFormatCode(window.monaco.editor.getEditors()[0])}
           className="bg-[#0e639c] hover:bg-[#1177bb] text-white px-2 py-1 rounded text-sm flex items-center"
         >
           <FiCode className="mr-1" /> Format Code
         </button>
+        <button
+          onClick={onRun}
+          className="bg-[#4caf50] hover:bg-[#45a049] text-white px-2 py-1 rounded text-sm flex items-center"
+        >
+          <FiPlay className="mr-1" /> Run
+        </button>
       </div>
-      <MonacoEditor
-        height="calc(100% - 40px)"
-        language={language}
-        value={file.content}
-        onChange={(value) => onChange(value || '')}
-        theme={theme === 'dark' ? 'myCustomTheme' : 'vs-light'}
-        options={{
-          minimap: { enabled: false },
-          fontSize: 14,
-          fontFamily: 'Fira Code, monospace',
-          formatOnPaste: true,
-          formatOnType: true,
-          scrollBeyondLastLine: false,
-          smoothScrolling: true,
-          cursorBlinking: 'smooth',
-          cursorSmoothCaretAnimation: 'on',
-          renderLineHighlight: 'all',
-          autoIndent: 'advanced',
-          lineNumbers: 'on',
-          lineNumbersMinChars: 3,
-          glyphMargin: false,
-          folding: true,
-          scrollbar: {
-            verticalScrollbarSize: 10,
-            horizontalScrollbarSize: 10,
-          },
-        }}
-        onMount={handleEditorDidMount}
-      />
+      <div className="flex-grow">
+        <MonacoEditor
+          height="100%"
+          language={language}
+          value={file.content}
+          onChange={(value) => onChange(value || '')}
+          theme={theme === 'dark' ? 'myCustomTheme' : 'vs-light'}
+          options={{
+            minimap: { enabled: false },
+            fontSize: 14,
+            fontFamily: 'Fira Code, monospace',
+            formatOnPaste: true,
+            formatOnType: true,
+            scrollBeyondLastLine: false,
+            smoothScrolling: true,
+            cursorBlinking: 'smooth',
+            cursorSmoothCaretAnimation: 'on',
+            renderLineHighlight: 'all',
+            autoIndent: 'advanced',
+            lineNumbers: 'on',
+            lineNumbersMinChars: 3,
+            glyphMargin: false,
+            folding: true,
+            scrollbar: {
+              verticalScrollbarSize: 10,
+              horizontalScrollbarSize: 10,
+            },
+          }}
+          onMount={handleEditorDidMount}
+        />
+      </div>
     </div>
   );
 };

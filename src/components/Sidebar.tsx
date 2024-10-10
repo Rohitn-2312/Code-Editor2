@@ -10,6 +10,7 @@ interface SidebarProps {
   onDeleteFile: (folderId: string, fileId: string) => void;
   onCreateFolder: (name: string) => void;
   onDeleteFolder: (id: string) => void;
+  width: number;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -20,6 +21,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   onDeleteFile,
   onCreateFolder,
   onDeleteFolder,
+  width,
 }) => {
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [newFileName, setNewFileName] = useState<string>('');
@@ -57,7 +59,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <div className="w-64 bg-[#252526] text-[#cccccc] p-2 overflow-y-auto border-r border-[#333333]">
+    <div className="bg-[#1e1e1e] text-[#cccccc] p-2 overflow-y-auto border-r border-[#333333] h-full" style={{ width }}>
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-sm font-semibold">EXPLORER</h2>
         <div className="flex space-x-1">
