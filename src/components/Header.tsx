@@ -1,5 +1,6 @@
 import React from 'react';
 import { Language } from '../types';
+import { FiSave, FiRefreshCw, FiMoon, FiSun } from 'react-icons/fi';
 
 interface HeaderProps {
   selectedLanguage: Language;
@@ -24,12 +25,12 @@ const Header: React.FC<HeaderProps> = ({
   setTheme,
 }) => {
   return (
-    <header className="flex items-center justify-between p-4 bg-gray-800 text-gray-200 border-b border-gray-700">
-      <div className="flex items-center space-x-4">
+    <header className="flex items-center justify-between p-2 bg-[#1e1e1e] text-white border-b border-[#333333]">
+      <div className="flex items-center space-x-2">
         <select
           value={selectedLanguage.code}
           onChange={(e) => onLanguageChange(languages.find(lang => lang.code === e.target.value)!)}
-          className="bg-gray-700 text-gray-200 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="bg-[#252526] text-white p-1 rounded text-sm focus:outline-none focus:ring-1 focus:ring-[#0e639c]"
         >
           {languages.map((lang) => (
             <option key={lang.code} value={lang.code}>
@@ -37,18 +38,18 @@ const Header: React.FC<HeaderProps> = ({
             </option>
           ))}
         </select>
-        <button onClick={onSave} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition duration-200">
-          Save
+        <button onClick={onSave} className="p-1 hover:bg-[#2a2d2e] rounded">
+          <FiSave className="w-4 h-4" />
         </button>
-        <button onClick={onReset} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition duration-200">
-          Reset
+        <button onClick={onReset} className="p-1 hover:bg-[#2a2d2e] rounded">
+          <FiRefreshCw className="w-4 h-4" />
         </button>
       </div>
       <button
         onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-        className="bg-gray-700 hover:bg-gray-600 text-gray-200 px-4 py-2 rounded-md transition duration-200"
+        className="p-1 hover:bg-[#2a2d2e] rounded"
       >
-        {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+        {theme === 'light' ? <FiMoon className="w-4 h-4" /> : <FiSun className="w-4 h-4" />}
       </button>
     </header>
   );

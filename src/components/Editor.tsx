@@ -17,18 +17,20 @@ const Editor: React.FC<EditorProps> = ({ file, onChange, theme, language }) => {
       base: 'vs-dark',
       inherit: true,
       rules: [
-        { token: 'comment', foreground: 'ffa500', fontStyle: 'italic underline' },
-        { token: 'comment.js', foreground: '008800', fontStyle: 'bold' },
-        { token: 'comment.css', foreground: '0000ff' }
+        { token: 'comment', foreground: '6A9955', fontStyle: 'italic' },
+        { token: 'keyword', foreground: '569CD6' },
+        { token: 'string', foreground: 'CE9178' },
+        { token: 'number', foreground: 'B5CEA8' },
+        { token: 'regexp', foreground: 'D16969' },
       ],
       colors: {
-        'editor.foreground': '#000000',
-        'editor.background': '#EDF9FA',
-        'editorCursor.foreground': '#8B0000',
-        'editor.lineHighlightBackground': '#0000FF20',
-        'editorLineNumber.foreground': '#008800',
-        'editor.selectionBackground': '#88000030',
-        'editor.inactiveSelectionBackground': '#88000015'
+        'editor.background': '#1E1E1E',
+        'editor.foreground': '#D4D4D4',
+        'editorCursor.foreground': '#FFFFFF',
+        'editor.lineHighlightBackground': '#2F3139',
+        'editorLineNumber.foreground': '#858585',
+        'editor.selectionBackground': '#264F78',
+        'editor.inactiveSelectionBackground': '#3A3D41'
       }
     });
     monaco.editor.setTheme('myCustomTheme');
@@ -41,19 +43,28 @@ const Editor: React.FC<EditorProps> = ({ file, onChange, theme, language }) => {
         language={language}
         value={file.content}
         onChange={(value) => onChange(value || '')}
-        theme={theme === 'dark' ? 'vs-dark' : 'light'}
+        theme={theme === 'dark' ? 'myCustomTheme' : 'vs-light'}
         options={{
-            minimap: { enabled: false },
-            fontSize: 14,
-            formatOnPaste: true,
-            formatOnType: true,
-            scrollBeyondLastLine: false,
-            smoothScrolling: true,
-            cursorBlinking: 'smooth',
-            cursorSmoothCaretAnimation: 'on',
-            renderLineHighlight: 'all',
-            autoIndent: 'advanced',
-          }}
+          minimap: { enabled: false },
+          fontSize: 14,
+          fontFamily: 'Fira Code, monospace',
+          formatOnPaste: true,
+          formatOnType: true,
+          scrollBeyondLastLine: false,
+          smoothScrolling: true,
+          cursorBlinking: 'smooth',
+          cursorSmoothCaretAnimation: 'on',
+          renderLineHighlight: 'all',
+          autoIndent: 'advanced',
+          lineNumbers: 'on',
+          lineNumbersMinChars: 3,
+          glyphMargin: false,
+          folding: true,
+          scrollbar: {
+            verticalScrollbarSize: 10,
+            horizontalScrollbarSize: 10,
+          },
+        }}
         onMount={handleEditorDidMount}
       />
     </div>

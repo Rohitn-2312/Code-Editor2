@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { File, Folder } from '../types';
+import { FiFolder, FiFolderPlus, FiFile, FiFilePlus, FiRefreshCw, FiChevronDown, FiChevronRight } from 'react-icons/fi';
 
 interface SidebarProps {
   folders: Folder[];
@@ -20,23 +21,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   onCreateFolder,
   onDeleteFolder,
 }) => {
-  const [newFolderName, setNewFolderName] = useState('');
-  const [newFileName, setNewFileName] = useState('');
   const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
-
-  const handleCreateFolder = () => {
-    if (newFolderName) {
-      onCreateFolder(newFolderName);
-      setNewFolderName('');
-    }
-  };
-
-  const handleCreateFile = (folderId: string) => {
-    if (newFileName) {
-      onCreateFile(folderId, newFileName);
-      setNewFileName('');
-    }
-  };
 
   const toggleFolder = (folderId: string) => {
     setExpandedFolders(prev =>
@@ -47,78 +32,46 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <div className="w-64 bg-gray-800 p-4 overflow-y-auto border-r border-gray-700">
-      <h2 className="text-lg font-semibold mb-4 text-gray-200">Project Explorer</h2>
-      <div className="mb-4">
-        <input
-          type="text"
-          value={newFolderName}
-          onChange={(e) => setNewFolderName(e.target.value)}
-          placeholder="New folder name"
-          className="w-full p-2 bg-gray-700 text-gray-200 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
-        />
-        <button
-          onClick={handleCreateFolder}
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-md transition duration-200"
-        >
-          Create Folder
-        </button>
+    <div className="w-64 bg-[#252526] text-[#cccccc] p-2 overflow-y-auto border-r border-[#333333]">
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-sm font-semibold">EXPLORER</h2>
+        <div className="flex space-x-1">
+          <button className="p-1 hover:bg-[#2a2d2e] rounded" onClick={() => onCreateFolder('New Folder')}>
+            <FiFolderPlus className="w-4 h-4" />
+          </button>
+          <button className="p-1 hover:bg-[#2a2d2e] rounded" onClick={() => onCreateFile(folders[0].id, 'New File')}>
+            <FiFilePlus className="w-4 h-4" />
+          </button>
+          <button className="p-1 hover:bg-[#2a2d2e] rounded">
+            <FiRefreshCw className="w-4 h-4" />
+          </button>
+        </div>
       </div>
-      <ul className="space-y-2">
+      <ul className="space-y-1">
         {folders.map((folder) => (
-          <li key={folder.id} className="mb-2">
+          <li key={folder.id}>
             <div
-              className="flex items-center justify-between p-2 bg-gray-700 rounded-md cursor-pointer"
+              className="flex items-center p-1 hover:bg-[#2a2d2e] rounded cursor-pointer"
               onClick={() => toggleFolder(folder.id)}
             >
-              <span>{folder.name}</span>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDeleteFolder(folder.id);
-                }}
-                className="text-red-400 hover:text-red-300 focus:outline-none"
-              >
-                Delete
-              </button>
+              {expandedFolders.includes(folder.id) ? <FiChevronDown className="w-4 h-4 mr-1" /> : <FiChevronRight className="w-4 h-4 mr-1" />}
+              <FiFolder className="w-4 h-4 mr-1" />
+              <span className="text-sm">{folder.name}</span>
             </div>
             {expandedFolders.includes(folder.id) && (
-              <ul className="ml-4 mt-2 space-y-1">
+              <ul className="ml-4 mt-1 space-y-1">
                 {folder.files.map((file) => (
                   <li
                     key={file.id}
-                    className={`flex justify-between items-center p-2 rounded-md cursor-pointer transition duration-200 ${
-                      currentFile && currentFile.id === file.id ? 'bg-blue-600' : 'hover:bg-gray-700'
+                    className={`flex items-center p-1 rounded cursor-pointer ${
+                      currentFile && currentFile.id === file.id ? 'bg-[#37373d]' : 'hover:bg-[#2a2d2e]'
                     }`}
                     onClick={() => onFileSelect(file)}
                   >
-                    <span className="truncate">{file.name}</span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onDeleteFile(folder.id, file.id);
-                      }}
-                      className="text-red-400 hover:text-red-300 focus:outline-none"
-                    >
-                      Delete
-                    </button>
+                    <FiFile className="w-4 h-4 mr-1" />
+                    <span className="text-sm truncate">{file.name}</span>
                   </li>
                 ))}
-                <li className="mt-2">
-                  <input
-                    type="text"
-                    value={newFileName}
-                    onChange={(e) => setNewFileName(e.target.value)}
-                    placeholder="New file name"
-                    className="w-full p-2 bg-gray-700 text-gray-200 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
-                  />
-                  <button
-                    onClick={() => handleCreateFile(folder.id)}
-                    className="w-full bg-green-500 hover:bg-green-600 text-white p-2 rounded-md transition duration-200"
-                  >
-                    Create File
-                  </button>
-                </li>
               </ul>
             )}
           </li>
