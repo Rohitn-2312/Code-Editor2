@@ -1,6 +1,7 @@
 import React from 'react';
 import MonacoEditor from '@monaco-editor/react';
 import { File } from '../types';
+import { FiCode } from 'react-icons/fi';
 
 interface EditorProps {
   file: File | null;
@@ -12,7 +13,7 @@ interface EditorProps {
 const Editor: React.FC<EditorProps> = ({ file, onChange, theme, language }) => {
   if (!file) return null;
 
-  const handleEditorDidMount = (_editor: any, monaco: any) => {
+  const handleEditorDidMount = (editor: any, monaco: any) => {
     monaco.editor.defineTheme('myCustomTheme', {
       base: 'vs-dark',
       inherit: true,
@@ -22,6 +23,21 @@ const Editor: React.FC<EditorProps> = ({ file, onChange, theme, language }) => {
         { token: 'string', foreground: 'CE9178' },
         { token: 'number', foreground: 'B5CEA8' },
         { token: 'regexp', foreground: 'D16969' },
+        { token: 'operator', foreground: 'D4D4D4' },
+        { token: 'namespace', foreground: '4EC9B0' },
+        { token: 'type', foreground: '4EC9B0' },
+        { token: 'struct', foreground: '4EC9B0' },
+        { token: 'class', foreground: '4EC9B0' },
+        { token: 'interface', foreground: '4EC9B0' },
+        { token: 'enum', foreground: '4EC9B0' },
+        { token: 'typeParameter', foreground: '4EC9B0' },
+        { token: 'function', foreground: 'DCDCAA' },
+        { token: 'member', foreground: '9CDCFE' },
+        { token: 'macro', foreground: 'BD63C5' },
+        { token: 'variable', foreground: '9CDCFE' },
+        { token: 'parameter', foreground: '9CDCFE' },
+        { token: 'property', foreground: '9CDCFE' },
+        { token: 'label', foreground: '9CDCFE' },
       ],
       colors: {
         'editor.background': '#1E1E1E',
@@ -34,12 +50,34 @@ const Editor: React.FC<EditorProps> = ({ file, onChange, theme, language }) => {
       }
     });
     monaco.editor.setTheme('myCustomTheme');
+
+    // Add format document command
+    editor.addAction({
+      id: 'format-document',
+      label: 'Format Document',
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyF],
+      run: async (ed: any) => {
+        await ed.getAction('editor.action.formatDocument').run();
+      }
+    });
+  };
+
+  const handleFormatCode = (editor: any) => {
+    editor.getAction('editor.action.formatDocument').run();
   };
 
   return (
     <div className="flex-1 overflow-hidden">
+      <div className="bg-[#252526] p-2 flex justify-end">
+        <button
+          onClick={() => handleFormatCode(window.monaco.editor.getEditors()[0])}
+          className="bg-[#0e639c] hover:bg-[#1177bb] text-white px-2 py-1 rounded text-sm flex items-center"
+        >
+          <FiCode className="mr-1" /> Format Code
+        </button>
+      </div>
       <MonacoEditor
-        height="100%"
+        height="calc(100% - 40px)"
         language={language}
         value={file.content}
         onChange={(value) => onChange(value || '')}

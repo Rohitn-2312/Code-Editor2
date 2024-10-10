@@ -62,7 +62,6 @@ const App: React.FC = () => {
     );
     setFolders(updatedFolders);
     setCurrentFile(newFile);
-    localStorage.setItem(`file_${newFile.id}`, newFile.content);
   };
 
   const deleteFile = (folderId: string, fileId: string) => {
@@ -71,9 +70,8 @@ const App: React.FC = () => {
     );
     setFolders(updatedFolders);
     if (currentFile && currentFile.id === fileId) {
-      setCurrentFile(updatedFolders[0].files[0] || null);
+      setCurrentFile(null);
     }
-    localStorage.removeItem(`file_${fileId}`);
   };
 
   const updateFile = (updatedFile: File) => {
@@ -98,7 +96,7 @@ const App: React.FC = () => {
     const updatedFolders = folders.filter(folder => folder.id !== id);
     setFolders(updatedFolders);
     if (currentFile && !updatedFolders.some(folder => folder.files.some(file => file.id === currentFile.id))) {
-      setCurrentFile(updatedFolders[0]?.files[0] || null);
+      setCurrentFile(null);
     }
   };
 
